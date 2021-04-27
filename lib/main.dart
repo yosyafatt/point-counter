@@ -2,6 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:async';
+import 'dart:typed_data';
 
 void main() {
   runApp(App());
@@ -26,33 +30,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<KickModel>(context);
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            painter: CircleBackgroundPainter(100),
-            child: Container(),
-          ),
-          CircleProgressTrack(),
-          Stack(children: provider.lists),
-          Column(
-            children: [
-              Text(
-                provider.remainingDuration.toString(),
-                style: TextStyle(
-                  fontSize: 20.0,
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              painter: CircleBackgroundPainter(100),
+              child: Container(),
+            ),
+            CircleProgressTrack(),
+            Stack(children: provider.lists),
+            Column(
+              children: [
+                Text(
+                  provider.remainingDuration.toString(),
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  ),
                 ),
-              ),
-              Text(
-                provider.listsLength.toString(),
-                style: TextStyle(
-                  fontSize: 60.0,
+                Text(
+                  provider.listsLength.toString(),
+                  style: TextStyle(
+                    fontSize: 60.0,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -69,6 +75,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
   AnimationController controller;
   AnimationStatus animationStatus = AnimationStatus.dismissed;
   // Duration remainingDuration;
+  ui.Image image;
 
   @override
   void initState() {
@@ -76,7 +83,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 5),
+      duration: Duration(seconds: 60),
     );
 
     Tween<double> _rotation = Tween(
@@ -91,8 +98,8 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           animationStatus = AnimationStatus.completed;
-          // controller.stop();
-          controller.reverse();
+          controller.stop();
+          // controller.reverse();
           // controller.repeat();
         } else if (status == AnimationStatus.dismissed) {
           // controller.forward();
@@ -100,6 +107,23 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       });
 
     controller.forward();
+    init();
+  }
+
+  Future<Null> init() async {
+    final ByteData data = await rootBundle.load('assets/images/feet.png');
+    image = await loadImage(new Uint8List.view(data.buffer));
+  }
+
+  Future<ui.Image> loadImage(List<int> img) async {
+    final Completer<ui.Image> completer = new Completer();
+    ui.decodeImageFromList(img, (ui.Image img) {
+      setState(() {
+        // isImageloaded = true;
+      });
+      return completer.complete(img);
+    });
+    return completer.future;
   }
 
   @override
@@ -117,7 +141,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
             return ElevatedButton(
               onPressed: () {
                 kick.radians(animation.value);
-                kick.kicked();
+                kick.kicked(image);
               },
               child: Text('Kick Now'),
             );
@@ -138,9 +162,11 @@ class CircleBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
       ..color = Colors.black.withOpacity(0.2)
-      ..strokeWidth = 10
+      ..strokeWidth = 15
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
+
+    // Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
 
     var path = Path();
     path.addOval(
@@ -179,7 +205,7 @@ class CirclePainter extends CustomPainter {
     var paint = Paint()
       // ..color = Colors.black.withOpacity(0.5)
       ..shader = gradient.createShader(rect)
-      ..strokeWidth = 10
+      ..strokeWidth = 15
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.butt;
 
@@ -201,18 +227,14 @@ class CirclePainter extends CustomPainter {
 
 // FOR PAINTING THE TRACKING POINT
 class PointPainter extends CustomPainter {
+  ui.Image image;
   final double radius;
   final double radians;
-  PointPainter(this.radius, this.radians);
+  PointPainter(this.radius, this.radians, {this.image});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // var pointStroke = Paint()
-    //   ..color = Colors.pink
-    //   ..strokeWidth = 1
-    //   ..style = PaintingStyle.stroke
-    //   ..strokeCap = StrokeCap.round;
-
+    // Future<ByteData> data = image.toByteData();
     var pointPaint = Paint()
       ..color = Colors.blue.shade400
       ..style = PaintingStyle.fill
@@ -229,7 +251,8 @@ class PointPainter extends CustomPainter {
       radius * math.sin(radians) + center.dy,
     );
 
-    canvas.drawCircle(pointOnCircle, 8, pointPaint);
+    // canvas.drawCircle(pointOnCircle, 8, pointPaint);
+    canvas.drawImage(image, pointOnCircle, pointPaint);
 
     path.close();
   }
@@ -300,10 +323,10 @@ class KickModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void kicked() {
+  void kicked(ui.Image image) {
     _lists.add(
       CustomPaint(
-        foregroundPainter: PointPainter(100, _currentRadians),
+        foregroundPainter: PointPainter(100, _currentRadians, image: image),
         child: Container(),
       ),
     );
