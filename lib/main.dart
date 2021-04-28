@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:image/image.dart' as IMG;
 
 void main() {
   runApp(App());
@@ -116,14 +117,22 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
   }
 
   Future<ui.Image> loadImage(List<int> img) async {
+    final IMG.Image image = IMG.decodeImage(img);
+    final IMG.Image resized = IMG.copyResize(image, width: 50);
+    final List<int> resizedBytes = IMG.encodePng(resized);
     final Completer<ui.Image> completer = new Completer();
-    ui.decodeImageFromList(img, (ui.Image img) {
-      setState(() {
-        // isImageloaded = true;
-      });
-      return completer.complete(img);
-    });
+
+    ui.decodeImageFromList(
+        resizedBytes, (ui.Image img) => completer.complete(img));
     return completer.future;
+    // final Completer<ui.Image> completer = new Completer();
+    // ui.decodeImageFromList(img, (ui.Image img) {
+    //   setState(() {
+    //     // isImageloaded = true;
+    //   });
+    //   return completer.complete(img);
+    // });
+    // return completer.future;
   }
 
   // NOTE: Draw Image Baru
@@ -245,12 +254,12 @@ class PointPainter extends CustomPainter {
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
-    Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
-    Paint paint = new Paint()..color = Colors.green;
+    // Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
+    // Paint paint = new Paint()..color = Colors.green;
 
     // Future<ByteData> data = image.toByteData();
     var pointPaint = Paint()
-      ..strokeWidth = 20
+      ..strokeWidth = 10
       ..color = Colors.blue.shade400
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
@@ -266,14 +275,19 @@ class PointPainter extends CustomPainter {
       radius * math.sin(radians) + center.dy,
     );
 
-    // canvas.drawCircle(pointOnCircle, 8, pointPaint);
-    // canvas.drawImage(image, pointOnCircle, pointPaint);
+    // var scale = size.width / image.height / 8;
+    // canvas.scale(scale);
+
+    canvas.drawCircle(pointOnCircle, 15, pointPaint);
+    // canvas.translate(image.width / scale, image.height / scale);
+    // canvas.translate(-image.width / 2 / scale, -image.height / 2 / scale);
+    canvas.drawImage(image, pointOnCircle, pointPaint);
 
     print(size);
-    // canvas.save();
-    var scale = size.width * 0.4 / image.width * 0.4;
-    canvas.scale(scale);
-    canvas.drawImage(image, pointOnCircle, pointPaint);
+    canvas.save();
+
+    // canvas.drawImage(image, pointOnCircle, pointPaint);
+    canvas.restore();
 
     path.close();
   }
