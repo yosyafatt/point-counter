@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             CustomPaint(
-              painter: CircleBackgroundPainter(100),
+              painter: CircleBackgroundPainter(150),
               child: Container(),
             ),
             CircleProgressTrack(),
@@ -84,7 +84,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 60),
+      duration: Duration(seconds: 10),
     );
 
     Tween<double> _rotation = Tween(
@@ -118,7 +118,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
 
   Future<ui.Image> loadImage(List<int> img) async {
     final IMG.Image image = IMG.decodeImage(img);
-    final IMG.Image resized = IMG.copyResize(image, width: 50);
+    final IMG.Image resized = IMG.copyResize(image, width: 40);
     final List<int> resizedBytes = IMG.encodePng(resized);
     final Completer<ui.Image> completer = new Completer();
 
@@ -153,7 +153,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       alignment: Alignment.center,
       children: [
         CustomPaint(
-          painter: CirclePainter(100, animation.value),
+          painter: CirclePainter(150, animation.value),
           child: Container(),
         ),
         Consumer<KickModel>(
@@ -271,14 +271,14 @@ class PointPainter extends CustomPainter {
     path.moveTo(center.dx, center.dy);
 
     Offset pointOnCircle = Offset(
-      radius * math.cos(radians) + center.dx,
-      radius * math.sin(radians) + center.dy,
+      radius * math.cos(radians) + center.dx - 20,
+      radius * math.sin(radians) + center.dy - 20,
     );
 
     // var scale = size.width / image.height / 8;
     // canvas.scale(scale);
 
-    canvas.drawCircle(pointOnCircle, 15, pointPaint);
+    // canvas.drawCircle(pointOnCircle, 15, pointPaint);
     // canvas.translate(image.width / scale, image.height / scale);
     // canvas.translate(-image.width / 2 / scale, -image.height / 2 / scale);
     canvas.drawImage(image, pointOnCircle, pointPaint);
@@ -361,7 +361,7 @@ class KickModel extends ChangeNotifier {
   void kicked(ui.Image image) {
     _lists.add(
       CustomPaint(
-        foregroundPainter: PointPainter(100, _currentRadians, image: image),
+        foregroundPainter: PointPainter(150, _currentRadians, image: image),
         child: Container(),
       ),
     );
