@@ -126,6 +126,18 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
     return completer.future;
   }
 
+  // NOTE: Draw Image Baru
+  // Future<ui.Image> loadImage() async {
+  //   ByteData data = await rootBundle.load("assets/kick_poin.png");
+  //   if (data == null) {
+  //     print("data is null");
+  //   } else {
+  //     var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+  //     var frame = await codec.getNextFrame();
+  //     return frame.image;
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -203,7 +215,6 @@ class CirclePainter extends CustomPainter {
       radius: radius,
     );
     var paint = Paint()
-      // ..color = Colors.black.withOpacity(0.5)
       ..shader = gradient.createShader(rect)
       ..strokeWidth = 15
       ..style = PaintingStyle.stroke
@@ -233,9 +244,13 @@ class PointPainter extends CustomPainter {
   PointPainter(this.radius, this.radians, {this.image});
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(ui.Canvas canvas, ui.Size size) {
+    Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
+    Paint paint = new Paint()..color = Colors.green;
+
     // Future<ByteData> data = image.toByteData();
     var pointPaint = Paint()
+      ..strokeWidth = 20
       ..color = Colors.blue.shade400
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
@@ -252,6 +267,12 @@ class PointPainter extends CustomPainter {
     );
 
     // canvas.drawCircle(pointOnCircle, 8, pointPaint);
+    // canvas.drawImage(image, pointOnCircle, pointPaint);
+
+    print(size);
+    // canvas.save();
+    var scale = size.width * 0.4 / image.width * 0.4;
+    canvas.scale(scale);
     canvas.drawImage(image, pointOnCircle, pointPaint);
 
     path.close();
