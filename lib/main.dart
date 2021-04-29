@@ -74,8 +74,8 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
     with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController controller;
+  AnimationStatus animationStatus = AnimationStatus.dismissed;
 
-  // Duration remainingDuration;
   ui.Image image;
 
   @override
@@ -123,27 +123,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
     ui.decodeImageFromList(
         resizedBytes, (ui.Image img) => completer.complete(img));
     return completer.future;
-    // final Completer<ui.Image> completer = new Completer();
-    // ui.decodeImageFromList(img, (ui.Image img) {
-    //   setState(() {
-    //     // isImageloaded = true;
-    //   });
-    //   return completer.complete(img);
-    // });
-    // return completer.future;
   }
-
-  // NOTE: Draw Image Baru
-  // Future<ui.Image> loadImage() async {
-  //   ByteData data = await rootBundle.load("assets/kick_poin.png");
-  //   if (data == null) {
-  //     print("data is null");
-  //   } else {
-  //     var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-  //     var frame = await codec.getNextFrame();
-  //     return frame.image;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -259,10 +239,6 @@ class PointPainter extends CustomPainter {
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
-    // Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
-    // Paint paint = new Paint()..color = Colors.green;
-    // Future<ByteData> data = image.toByteData();
-
     var pointPaint = Paint()
       ..strokeWidth = 10
       ..color = Colors.blue.shade400
@@ -280,18 +256,11 @@ class PointPainter extends CustomPainter {
       radius * math.sin(radians) + center.dy - 20,
     );
 
-    // var scale = size.width / image.height / 8;
-    // canvas.scale(scale);
-
-    // canvas.drawCircle(pointOnCircle, 15, pointPaint);
-    // canvas.translate(image.width / scale, image.height / scale);
-    // canvas.translate(-image.width / 2 / scale, -image.height / 2 / scale);
     canvas.drawImage(image, pointOnCircle, pointPaint);
 
     print(size);
     canvas.save();
 
-    // canvas.drawImage(image, pointOnCircle, pointPaint);
     canvas.restore();
 
     path.close();
