@@ -74,7 +74,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
     with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController controller;
-  AnimationStatus animationStatus = AnimationStatus.dismissed;
+
   // Duration remainingDuration;
   ui.Image image;
 
@@ -98,7 +98,6 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          animationStatus = AnimationStatus.completed;
           controller.stop();
           // controller.reverse();
           // controller.repeat();
@@ -107,7 +106,6 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
         }
       });
 
-    controller.forward();
     init();
   }
 
@@ -158,14 +156,21 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
         ),
         Consumer<KickModel>(
           builder: (context, kick, _) {
-            // kick.setRemainingDuration(remainingDuration);
-            return ElevatedButton(
-              onPressed: () {
-                kick.radians(animation.value);
-                kick.kicked(image);
-              },
-              child: Text('Kick Now'),
-            );
+            if (controller.isDismissed) {
+              return ElevatedButton(
+                onPressed: () {
+                  controller.forward();
+                  // kick.radians(animation.value);
+                  // kick.kicked(image);
+                },
+                child: Text('Mulai'),
+              );
+            } else {
+              return ElevatedButton(
+                onPressed: () {},
+                child: Text("Hello"),
+              );
+            }
           },
         ),
       ],
@@ -256,8 +261,8 @@ class PointPainter extends CustomPainter {
   void paint(ui.Canvas canvas, ui.Size size) {
     // Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
     // Paint paint = new Paint()..color = Colors.green;
-
     // Future<ByteData> data = image.toByteData();
+
     var pointPaint = Paint()
       ..strokeWidth = 10
       ..color = Colors.blue.shade400
