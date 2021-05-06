@@ -239,11 +239,7 @@ class PointPainter extends CustomPainter {
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
-    var pointPaint = Paint()
-      ..strokeWidth = 10
-      ..color = Colors.blue.shade400
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.round;
+    var pointPaint = Paint();
 
     var path = Path();
 
@@ -335,7 +331,7 @@ class KickModel extends ChangeNotifier {
   void kicked(ui.Image image) {
     _lists.add(
       CustomPaint(
-        foregroundPainter: PointPainter(140, _currentRadians, image: image),
+        foregroundPainter: PointPainter(150, _currentRadians, image: image),
         child: Container(),
       ),
     );
