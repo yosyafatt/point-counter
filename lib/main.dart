@@ -136,21 +136,21 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
         ),
         Consumer<KickModel>(
           builder: (context, kick, _) {
-            if (controller.isDismissed) {
-              return ElevatedButton(
-                onPressed: () {
-                  controller.forward();
-                  // kick.radians(animation.value);
-                  // kick.kicked(image);
-                },
-                child: Text('Mulai'),
-              );
-            } else {
-              return ElevatedButton(
-                onPressed: () {},
-                child: Text("Hello"),
-              );
-            }
+            // if (controller.isDismissed) {
+            return ElevatedButton(
+              onPressed: () {
+                controller.forward();
+                kick.radians(animation.value);
+                kick.kicked(image);
+              },
+              child: Text('Mulai'),
+            );
+            // } else {
+            //   return ElevatedButton(
+            //     onPressed: () {},
+            //     child: Text("Hello"),
+            //   );
+            // }
           },
         ),
       ],
