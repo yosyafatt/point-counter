@@ -98,7 +98,6 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          animationStatus = AnimationStatus.completed;
           controller.stop();
           // controller.reverse();
           // controller.repeat();
@@ -107,7 +106,6 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
         }
       });
 
-    controller.forward();
     init();
   }
 
@@ -138,14 +136,21 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
         ),
         Consumer<KickModel>(
           builder: (context, kick, _) {
-            // kick.setRemainingDuration(remainingDuration);
-            return ElevatedButton(
-              onPressed: () {
-                kick.radians(animation.value);
-                kick.kicked(image);
-              },
-              child: Text('Kick Now'),
-            );
+            if (controller.isDismissed) {
+              return ElevatedButton(
+                onPressed: () {
+                  controller.forward();
+                  // kick.radians(animation.value);
+                  // kick.kicked(image);
+                },
+                child: Text('Mulai'),
+              );
+            } else {
+              return ElevatedButton(
+                onPressed: () {},
+                child: Text("Hello"),
+              );
+            }
           },
         ),
       ],
