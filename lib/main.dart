@@ -131,7 +131,7 @@ class _CircleProgressTrackState extends State<CircleProgressTrack>
       alignment: Alignment.center,
       children: [
         CustomPaint(
-          painter: CirclePainter(150, animation.value),
+          painter: CircleGradientPainter(150, animation.value),
           child: Container(),
         ),
         Consumer<KickModel>(
@@ -191,10 +191,10 @@ class CircleBackgroundPainter extends CustomPainter {
 }
 
 // FOR PAINTING THE CIRCLE
-class CirclePainter extends CustomPainter {
+class CircleGradientPainter extends CustomPainter {
   final double radius;
   final double radians;
-  CirclePainter(this.radius, this.radians);
+  CircleGradientPainter(this.radius, this.radians);
   final gradient = LinearGradient(
     colors: [
       Color(0xFFFC9858),
