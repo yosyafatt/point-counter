@@ -330,7 +330,7 @@ class KickModel extends ChangeNotifier {
   void kicked(ui.Image image) {
     _lists.add(
       CustomPaint(
-        foregroundPainter: PointPainter(150, _currentRadians, image: image),
+        foregroundPainter: PointPainter(140, _currentRadians, image: image),
         child: Container(),
       ),
     );
